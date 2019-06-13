@@ -1,0 +1,11 @@
+.circleci/
+.eslintrc
+.eslintignore
+.editorconfig
+.gitignore
+.nycrc
+.nyc_output/
+*.log
+circle.yml
+coverage/
+test/
