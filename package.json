@@ -1,0 +1,53 @@
+{
+  "name": "@alpha-lambda/aws-drivers",
+  "version": "1.0.0",
+  "description": "Wrappers for AWS SDK services that make life easier (sometimes)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alpha-lambda/aws-drivers.git"
+  },
+  "keywords": [
+    "aws",
+    "aws lambda",
+    "service",
+    "function",
+    "lambda",
+    "serverless",
+    "alpha",
+    "helper",
+    "util",
+    "wrapper"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "test": "nyc --reporter=lcov --reporter=text mocha",
+    "posttest": "npm run lint"
+  },
+  "author": {
+    "name": "Anton Bazhal",
+    "email": "am.bazhal@gmail.com",
+    "url": "https://github.com/AntonBazhal"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "aws-sdk": "^2.474.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "chai-uuid": "^1.0.6",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.17.3",
+    "eslint-plugin-mocha": "^5.3.0",
+    "mocha": "^6.1.4",
+    "nyc": "^14.1.1",
+    "sinon": "^7.3.2"
+  },
+  "peerDependencies": {
+    "aws-sdk": "^2.474.0"
+  },
+  "dependencies": {
+    "@alpha-lambda/log-me-gently": "^1.0.0",
+    "uuid": "^3.3.2"
+  }
+}
