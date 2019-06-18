@@ -1,5 +1,6 @@
 'use strict';
 
+const AWS = require('aws-sdk');
 const { expect } = require('chai');
 
 const Driver = require('../lib/driver');
@@ -9,7 +10,7 @@ describe('Driver', function() {
   setupTestHarness();
 
   beforeEach(function() {
-    this.driver = new Driver('S3');
+    this.driver = new Driver(AWS.S3);
   });
 
   describe('#constructor', function() {
@@ -21,7 +22,7 @@ describe('Driver', function() {
     it('should use provided client', function() {
       const client = { foo: 'bar' };
 
-      const driver = new Driver('S3', {}, { useClient: client });
+      const driver = new Driver(AWS.S3, {}, { useClient: client });
 
       expect(driver._client).to.deep.equal(client);
     });
