@@ -21,7 +21,7 @@ describe('Driver', function() {
     it('should use provided client', function() {
       const client = { foo: 'bar' };
 
-      const driver = new Driver('S3', {}, { client });
+      const driver = new Driver('S3', {}, { useClient: client });
 
       expect(driver._client).to.deep.equal(client);
     });
