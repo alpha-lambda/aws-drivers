@@ -13,11 +13,11 @@ Wrappers for AWS SDK services that make life easier (sometimes).
 ### Constructing drivers
 Each driver has a constructor of the following form:
 
-### constructor({ [client], [conf], [level] })
-  - **[client]** - { Object } - preconfigured client
-  - **[conf]** - { Object } - config object that has client-specific config, including common:
-    - **[client]** - { Object } - config field that is used to construct client
+### constructor({ [client], [useClient], [level], [...other] })
+  - **[client]** - { Object } - config field that is used to construct client (ignored when pre-configured client is passed)
+  - **[useClient]** - { Object } - pre-configured client
   - **[level]** - { String } - log level
+  - **[...other]** - { Any } - driver-specific config options
 
 ### S3
 
