@@ -33,6 +33,47 @@ Adds an object to a bucket.
   - **data** - { Any } - object data; can be a String or any type that can be stringified
   - **[key]** - { String } - object key [random UUID by default]
 
+### SQS
+
+Additional config properties:
+  - **[maxConcurrency]** - { Number } - max number of concurrent AWS API calls [defaults to `Infinity`]
+
+#### parse(context, input)
+Validates and parses input, where input can be SQS message or SQS event. Sample output:
+
+```json
+[
+  {
+    "body": {
+      "foo": "foo",
+      "bar": "bar"
+    },
+    "messageAttributes": {
+      "baz": 12345
+    },
+    "messageId": 1234567890
+  }
+]
+```
+
+#### send(context, queueUrl, messages)
+Sends messages to the specified queue using batch API to reduce number of calls.
+  - **queueUrl** - { String } - the URL of the SQS queue to which batched messages are sent
+  - **messages** - { Any | Any[] } - messages to be sent
+
+#### sendToDLQ(context, dlqUrl, items)
+Formats and sends messages to the specified deadletter queue.
+  - **dlqUrl** - { String } - the deadletter queue URL to which messages are sent
+  - **items** - { Object | Object[] } - items to send to the deadletter queue, where:
+    - **event** - { Any } - original payload that can't be processed
+    - **error** - { Object } - error that occured during processing
+
+These message attributes are added to each message:
+  - **err.message** - error message
+  - **err.stack** - error stack trace
+  - **context.awsRequestId** - requestId for the current request, provided by Amazon
+  - **origin.messageId** - original messageId (if payload is SQS message)
+
 ## License
 
 The MIT License (MIT)
