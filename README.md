@@ -50,11 +50,12 @@ Get a pre-signed URL for a given operation name.
   - **parameters** - { Object } - parameters to pass to the operation
   - **urlTTL** - { Number } - URL expiration time in seconds
 
-#### putObject(context, { bucket, data, [key] })
+#### putObject(context, { bucket, data, [key] }, params)
 Adds an object to a bucket.
   - **bucket** - { String } - name of the bucket
-  - **data** - { Any } - object data; can be a String or any type that can be stringified
+  - **data** - { Buffer | Typed Array | Blob | String | ReadableStream } - object data
   - **[key]** - { String } - object key [random UUID by default]
+  - **[params]** - { Object } - any additional input parameters that [S3.putObject][s3-put-object-url] allows
 
 ### SQS
 
@@ -125,3 +126,4 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 [document-client-update-url]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#update-property
 [npm-url]: https://www.npmjs.org/package/@alpha-lambda/aws-drivers
 [npm-image]: https://img.shields.io/npm/v/@alpha-lambda/aws-drivers.svg
+[s3-put-object-url]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#putObject-property

@@ -137,22 +137,49 @@ describe('S3Driver', function() {
         .that.is.a.uuid('v4');
     });
 
-    it('should stringify data that is no a string', async function() {
+    it('should add extra params when passed', async function() {
       const bucket = 'test-bucket';
-      const data = { foo: 'bar' };
+      const data = 'foo';
+      const key = 'test-key';
+      const params = {
+        ContentEncoding: 'gzip'
+      };
+      const response = { data: uuid.v4() };
 
-      this.client.putObject.returns(this.awsPromise());
+      this.client.putObject.returns(this.awsPromise(response));
 
       await expect(
-        this.driver.putObject(this.testContext, { bucket, data })
-      ).to.be.fulfilled;
+        this.driver.putObject(this.testContext, { bucket, data, key }, params)
+      ).to.eventually.deep.equal(response);
 
-      sinon.assert.calledWith(
-        this.client.putObject,
-        sinon.match({
-          Body: JSON.stringify(data)
-        })
-      );
+      sinon.assert.calledWith(this.client.putObject, {
+        Body: data,
+        Bucket: bucket,
+        ContentEncoding: params.ContentEncoding,
+        Key: key
+      });
+    });
+
+    it('should override extra params in case of collision', async function() {
+      const bucket = 'test-bucket';
+      const data = 'foo';
+      const key = 'test-key';
+      const params = {
+        Bucket: 'another-bucket'
+      };
+      const response = { data: uuid.v4() };
+
+      this.client.putObject.returns(this.awsPromise(response));
+
+      await expect(
+        this.driver.putObject(this.testContext, { bucket, data, key }, params)
+      ).to.eventually.deep.equal(response);
+
+      sinon.assert.calledWith(this.client.putObject, {
+        Body: data,
+        Bucket: bucket,
+        Key: key
+      });
     });
 
     it('should wrap AWS error into AwsDriverError', async function() {
