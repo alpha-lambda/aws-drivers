@@ -85,35 +85,35 @@ describe('S3Driver', function() {
 
   describe('#putObject', function() {
     it('should throw when bucket is not passed', function() {
-      const data = uuid.v4();
+      const body = uuid.v4();
 
       expect(
-        () => this.driver.putObject(this.testContext, { data })
+        () => this.driver.putObject(this.testContext, { body })
       ).to.throw('missing bucket');
     });
 
-    it('should throw when data is not passed', function() {
+    it('should throw when body is not passed', function() {
       const bucket = 'test-bucket';
 
       expect(
         () => this.driver.putObject(this.testContext, { bucket })
-      ).to.throw('missing data');
+      ).to.throw('missing body');
     });
 
     it('should format request and parse response properly', async function() {
       const bucket = 'test-bucket';
-      const data = 'foo';
+      const body = 'foo';
       const key = 'test-key';
-      const response = { data: uuid.v4() };
+      const response = { body: uuid.v4() };
 
       this.client.putObject.returns(this.awsPromise(response));
 
       await expect(
-        this.driver.putObject(this.testContext, { bucket, data, key })
+        this.driver.putObject(this.testContext, { bucket, body, key })
       ).to.eventually.deep.equal(response);
 
       sinon.assert.calledWith(this.client.putObject, {
-        Body: data,
+        Body: body,
         Bucket: bucket,
         Key: key
       });
@@ -121,12 +121,12 @@ describe('S3Driver', function() {
 
     it('should generate key when not passed', async function() {
       const bucket = 'test-bucket';
-      const data = 'foo';
+      const body = 'foo';
 
       this.client.putObject.returns(this.awsPromise());
 
       await expect(
-        this.driver.putObject(this.testContext, { bucket, data })
+        this.driver.putObject(this.testContext, { bucket, body })
       ).to.be.fulfilled;
 
       sinon.assert.calledOnce(this.client.putObject);
@@ -139,21 +139,21 @@ describe('S3Driver', function() {
 
     it('should add extra params when passed', async function() {
       const bucket = 'test-bucket';
-      const data = 'foo';
+      const body = 'foo';
       const key = 'test-key';
       const params = {
         ContentEncoding: 'gzip'
       };
-      const response = { data: uuid.v4() };
+      const response = { body: uuid.v4() };
 
       this.client.putObject.returns(this.awsPromise(response));
 
       await expect(
-        this.driver.putObject(this.testContext, { bucket, data, key }, params)
+        this.driver.putObject(this.testContext, { bucket, body, key }, params)
       ).to.eventually.deep.equal(response);
 
       sinon.assert.calledWith(this.client.putObject, {
-        Body: data,
+        Body: body,
         Bucket: bucket,
         ContentEncoding: params.ContentEncoding,
         Key: key
@@ -162,21 +162,21 @@ describe('S3Driver', function() {
 
     it('should override extra params in case of collision', async function() {
       const bucket = 'test-bucket';
-      const data = 'foo';
+      const body = 'foo';
       const key = 'test-key';
       const params = {
         Bucket: 'another-bucket'
       };
-      const response = { data: uuid.v4() };
+      const response = { body: uuid.v4() };
 
       this.client.putObject.returns(this.awsPromise(response));
 
       await expect(
-        this.driver.putObject(this.testContext, { bucket, data, key }, params)
+        this.driver.putObject(this.testContext, { bucket, body, key }, params)
       ).to.eventually.deep.equal(response);
 
       sinon.assert.calledWith(this.client.putObject, {
-        Body: data,
+        Body: body,
         Bucket: bucket,
         Key: key
       });
@@ -185,15 +185,137 @@ describe('S3Driver', function() {
     it('should wrap AWS error into AwsDriverError', async function() {
       const error = new Error('AWS error');
       const bucket = 'test-bucket';
-      const data = 'foo';
+      const body = 'foo';
 
       this.client.putObject.returns(this.awsPromise(Promise.reject(error)));
 
       const actual = await expect(
-        this.driver.putObject(this.testContext, { bucket, data })
+        this.driver.putObject(this.testContext, { bucket, body })
       ).to.be.rejectedWith(AwsDriverError);
 
       expect(actual).to.have.property('message', 'failed to store object in S3');
+      expect(actual)
+        .to.have.property('cause')
+        .that.is.deep.equal(error);
+    });
+  });
+
+  describe('#upload', function() {
+    it('should throw when bucket is not passed', function() {
+      const body = uuid.v4();
+
+      expect(
+        () => this.driver.upload(this.testContext, { body })
+      ).to.throw('missing bucket');
+    });
+
+    it('should throw when body is not passed', function() {
+      const bucket = 'test-bucket';
+
+      expect(
+        () => this.driver.upload(this.testContext, { bucket })
+      ).to.throw('missing body');
+    });
+
+    it('should format request and parse response properly', async function() {
+      const bucket = 'test-bucket';
+      const body = 'foo';
+      const key = 'test-key';
+      const options = { foo: 'foo' };
+      const response = { body: uuid.v4() };
+
+      this.client.upload.returns(this.awsPromise(response));
+
+      await expect(
+        this.driver.upload(this.testContext, { bucket, body, key, options })
+      ).to.eventually.deep.equal(response);
+
+      sinon.assert.calledWith(
+        this.client.upload,
+        {
+          Body: body,
+          Bucket: bucket,
+          Key: key
+        },
+        options
+      );
+    });
+
+    it('should generate key when not passed', async function() {
+      const bucket = 'test-bucket';
+      const body = 'foo';
+
+      this.client.upload.returns(this.awsPromise());
+
+      await expect(
+        this.driver.upload(this.testContext, { bucket, body })
+      ).to.be.fulfilled;
+
+      sinon.assert.calledOnce(this.client.upload);
+      const args = this.client.upload.firstCall.args[0];
+
+      expect(args)
+        .to.have.property('Key')
+        .that.is.a.uuid('v4');
+    });
+
+    it('should add extra params when passed', async function() {
+      const bucket = 'test-bucket';
+      const body = 'foo';
+      const key = 'test-key';
+      const params = {
+        ContentEncoding: 'gzip'
+      };
+      const response = { body: uuid.v4() };
+
+      this.client.upload.returns(this.awsPromise(response));
+
+      await expect(
+        this.driver.upload(this.testContext, { bucket, body, key }, params)
+      ).to.eventually.deep.equal(response);
+
+      sinon.assert.calledWith(this.client.upload, {
+        Body: body,
+        Bucket: bucket,
+        ContentEncoding: params.ContentEncoding,
+        Key: key
+      });
+    });
+
+    it('should override extra params in case of collision', async function() {
+      const bucket = 'test-bucket';
+      const body = 'foo';
+      const key = 'test-key';
+      const params = {
+        Bucket: 'another-bucket'
+      };
+      const response = { body: uuid.v4() };
+
+      this.client.upload.returns(this.awsPromise(response));
+
+      await expect(
+        this.driver.upload(this.testContext, { bucket, body, key }, params)
+      ).to.eventually.deep.equal(response);
+
+      sinon.assert.calledWith(this.client.upload, {
+        Body: body,
+        Bucket: bucket,
+        Key: key
+      });
+    });
+
+    it('should wrap AWS error into AwsDriverError', async function() {
+      const error = new Error('AWS error');
+      const bucket = 'test-bucket';
+      const body = 'foo';
+
+      this.client.upload.returns(this.awsPromise(Promise.reject(error)));
+
+      const actual = await expect(
+        this.driver.upload(this.testContext, { bucket, body })
+      ).to.be.rejectedWith(AwsDriverError);
+
+      expect(actual).to.have.property('message', 'failed to upload object to S3');
       expect(actual)
         .to.have.property('cause')
         .that.is.deep.equal(error);

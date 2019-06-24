@@ -50,12 +50,20 @@ Get a pre-signed URL for a given operation name.
   - **parameters** - { Object } - parameters to pass to the operation
   - **urlTTL** - { Number } - URL expiration time in seconds
 
-#### putObject(context, { bucket, data, [key] }, params)
+#### putObject(context, { bucket, body, [key] }, params)
 Adds an object to a bucket.
   - **bucket** - { String } - name of the bucket
-  - **data** - { Buffer | Typed Array | Blob | String | ReadableStream } - object data
+  - **body** - { Buffer | Typed Array | Blob | String | ReadableStream } - object data
   - **[key]** - { String } - object key [random UUID by default]
   - **[params]** - { Object } - any additional input parameters that [S3.putObject][s3-put-object-url] allows
+
+#### upload(context, { bucket, body, [key], [options] }, params)
+  Uploads an arbitrarily sized buffer, blob, or stream, using intelligent concurrent handling of parts if the payload is large enough.
+    - **bucket** - { String } - name of the bucket
+    - **body** - { Buffer | Typed Array | Blob | String | ReadableStream } - object data
+    - **[key]** - { String } - object key [random UUID by default]
+    - **[options]** - { Object } - upload operation options such as [part and/or queue size][s3-upload-url]
+    - **[params]** - { Object } - any additional input parameters that [S3.upload][s3-upload-url] allows
 
 ### SQS
 
@@ -127,3 +135,4 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 [npm-url]: https://www.npmjs.org/package/@alpha-lambda/aws-drivers
 [npm-image]: https://img.shields.io/npm/v/@alpha-lambda/aws-drivers.svg
 [s3-put-object-url]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#putObject-property
+[s3-upload-url]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#upload-property
