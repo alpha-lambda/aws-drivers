@@ -19,6 +19,29 @@ Each driver has a constructor of the following form:
   - **[level]** - { String } - log level
   - **[...other]** - { Any } - driver-specific config options
 
+### DynamoDBDocumentClient
+
+Additional config properties:
+  - **[attempts]** - { Number } - max number of attempts to `batchGet` items
+
+#### batchGet(context, params)
+Returns the attributes of one or more items from one or more tables ([parameters reference][document-client-batch-get-url]). Automatically retries when API call returns `UnprocessedKeys`
+
+#### get(context, params)
+Returns a set of attributes for the item with the given key ([parameters reference][document-client-get-url]).
+
+#### put(context, params)
+Creates a new item, or replaces an old item ([parameters reference][document-client-put-url]).
+
+#### query(context, params)
+Finds items based on key values ([parameters reference][document-client-query-url]).
+
+#### scan(context, params)
+Returns one or more items and item attributes by accessing every item in a table or a secondary index ([parameters reference][document-client-scan-url]).
+
+#### update(context, params)
+Edits an existing item's attributes, or adds a new item to the table if it does not already exist ([parameters reference][document-client-update-url]).
+
 ### S3
 
 #### getSignedUrl(context, { operation, parameters, urlTTL })
@@ -94,5 +117,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 [dependencies-image]: https://david-dm.org/alpha-lambda/aws-drivers/status.svg
 [devdependencies-url]: https://david-dm.org/alpha-lambda/aws-drivers?type=dev
 [devdependencies-image]: https://david-dm.org/alpha-lambda/aws-drivers/dev-status.svg
+[document-client-batch-get-url]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#batchGet-property
+[document-client-get-url]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#get-property
+[document-client-put-url]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#put-property
+[document-client-query-url]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#query-property
+[document-client-scan-url]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#scan-property
+[document-client-update-url]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#update-property
 [npm-url]: https://www.npmjs.org/package/@alpha-lambda/aws-drivers
 [npm-image]: https://img.shields.io/npm/v/@alpha-lambda/aws-drivers.svg
