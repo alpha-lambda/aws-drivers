@@ -559,6 +559,32 @@ describe('SQSDriver', function() {
       sinon.assert.calledOnce(this.client.sendMessageBatch);
     });
 
+    it('should support delaying messages', async function() {
+      const queueUrl = 'test-queue';
+      const message = {
+        body: { data: uuid.v4() },
+        delaySeconds: 100
+      };
+
+      this.client.sendMessageBatch.returns(this.awsPromise({ Successful: [] }));
+
+      await expect(
+        this.driver._sendBatch(this.testContext, queueUrl, [message])
+      ).to.eventually.be.fulfilled;
+
+      sinon.assert.calledWithExactly(
+        this.client.sendMessageBatch,
+        {
+          QueueUrl: queueUrl,
+          Entries: [{
+            Id: '0',
+            DelaySeconds: 100,
+            MessageBody: JSON.stringify(message.body)
+          }]
+        }
+      );
+    });
+
     it('should format message attributes', async function() {
       const queueUrl = 'test-queue';
       const message = {

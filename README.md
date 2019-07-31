@@ -91,7 +91,10 @@ Validates and parses input, where input can be SQS message or SQS event. Sample 
 #### send(context, queueUrl, messages)
 Sends messages to the specified queue using batch API to reduce number of calls.
   - **queueUrl** - { String } - the URL of the SQS queue to which batched messages are sent
-  - **messages** - { Any | Any[] } - messages to be sent
+  - **messages** - { Object | Object[] } - messages to be sent, where each message has the following properties:
+    - **body** - { Any } - the body of the message
+    - **[delaySeconds]** - { Number } - the length of time, in seconds, for which a specific message is delayed
+    - **[messageAttributes]** - { Object } - key-value pairs of attributes to be added to the message
 
 #### sendToDLQ(context, dlqUrl, items)
 Formats and sends messages to the specified deadletter queue.
