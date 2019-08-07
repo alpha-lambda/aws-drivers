@@ -1,20 +1,21 @@
 'use strict';
 
-const sinon = require('sinon');
-const { expect } = require('chai');
 const AWSXRay = require('aws-xray-sdk');
+const { expect } = require('chai');
+const sinon = require('sinon');
 
 const XRay = require('../lib/xray');
 
 describe('XRay', function () {
   beforeEach(function () {
-    this.resolve = sinon.stub().resolves();
-    this.reject = sinon.stub().rejects();
+    this.sandbox = sinon.createSandbox();
+    this.resolve = this.sandbox.stub().resolves();
+    this.reject = this.sandbox.stub().rejects();
     this.log = {
-      warn: Function.prototype
+      warn: this.sandbox.stub()
     };
 
-    sinon.stub(this.log);
+    this.sandbox.stub(this.log);
 
     this.context = {
       log: this.log
@@ -22,12 +23,12 @@ describe('XRay', function () {
   });
 
   afterEach(function() {
-    sinon.verifyAndRestore();
+    this.sandbox.restore();
   });
 
   describe('trace', function () {
     it('executes the fake tracer if not enabled', async function () {
-      sinon.stub(AWSXRay, 'captureAsyncFunc');
+      this.sandbox.stub(AWSXRay, 'captureAsyncFunc');
       const xray = new XRay({ level: 'warn', isEnabled: false });
 
       await xray.trace(this.context, 'Name of trace', async () => { });
@@ -36,7 +37,7 @@ describe('XRay', function () {
     });
 
     it('warns if unable to open a segment', async function () {
-      sinon.stub(AWSXRay, 'captureAsyncFunc').throws(new Error());
+      this.sandbox.stub(AWSXRay, 'captureAsyncFunc').throws(new Error());
       const xray = new XRay({ level: 'warn', isEnabled: true });
 
       await expect(
@@ -59,7 +60,7 @@ describe('XRay', function () {
         this.reject,
       );
       const subsegment = {
-        addAnnotation: sinon.stub(),
+        addAnnotation: this.sandbox.stub(),
       };
 
       await expect(
@@ -80,7 +81,7 @@ describe('XRay', function () {
         this.reject,
       );
       const subsegment = {
-        addAnnotation: sinon.stub().throws(),
+        addAnnotation: this.sandbox.stub().throws(),
         close: () => { },
       };
 
@@ -104,7 +105,7 @@ describe('XRay', function () {
         this.reject,
       );
       const subsegment = {
-        close: sinon.stub().throws(),
+        close: this.sandbox.stub().throws(),
       };
 
       await expect(
@@ -128,7 +129,7 @@ describe('XRay', function () {
         this.reject,
       );
       const subsegment = {
-        close: sinon.stub(),
+        close: this.sandbox.stub(),
       };
 
       await expect(
@@ -150,7 +151,7 @@ describe('XRay', function () {
         this.reject,
       );
       const subsegment = {
-        close: sinon.stub().throws(),
+        close: this.sandbox.stub().throws(),
       };
 
       await expect(
@@ -174,7 +175,7 @@ describe('XRay', function () {
 
     it('calls getSegment if xray is enabled', function () {
       const xray = new XRay({ level: 'warn', isEnabled: true });
-      sinon.stub(AWSXRay, 'getSegment').returns({ trace_id: 5 });
+      this.sandbox.stub(AWSXRay, 'getSegment').returns({ trace_id: 5 });
 
       expect(xray.getXRayTraceId()).to.be.deep.equal(5);
       expect(AWSXRay.getSegment.callCount).to.be.equal(1);
