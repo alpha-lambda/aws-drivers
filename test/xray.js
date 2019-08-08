@@ -2,7 +2,6 @@
 
 const AWSXRay = require('aws-xray-sdk');
 const { expect } = require('chai');
-const sinon = require('sinon');
 const XRay = require('../lib/xray');
 const setupTestHarness = require('./setup-test-harness');
 
@@ -10,7 +9,6 @@ describe('XRay', function () {
   setupTestHarness();
 
   beforeEach(function () {
-    this.sandbox = sinon.createSandbox();
     this.resolve = this.sandbox.stub().resolves();
     this.reject = this.sandbox.stub().rejects();
     this.log = {
