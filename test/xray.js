@@ -3,10 +3,12 @@
 const AWSXRay = require('aws-xray-sdk');
 const { expect } = require('chai');
 const sinon = require('sinon');
-
 const XRay = require('../lib/xray');
+const setupTestHarness = require('./setup-test-harness');
 
 describe('XRay', function () {
+  setupTestHarness();
+
   beforeEach(function () {
     this.sandbox = sinon.createSandbox();
     this.resolve = this.sandbox.stub().resolves();
@@ -15,11 +17,7 @@ describe('XRay', function () {
       warn: this.sandbox.stub()
     };
 
-    this.sandbox.stub(this.log);
-
-    this.context = {
-      log: this.log
-    };
+    this.testContext.log = this.log;
   });
 
   afterEach(function() {
@@ -31,7 +29,7 @@ describe('XRay', function () {
       this.sandbox.stub(AWSXRay, 'captureAsyncFunc');
       const xray = new XRay({ level: 'warn', isEnabled: false });
 
-      await xray.trace(this.context, 'Name of trace', async () => { });
+      await xray.trace(this.testContext, 'Name of trace', async () => { });
 
       expect(AWSXRay.captureAsyncFunc.callCount).to.be.equal(0);
     });
@@ -41,7 +39,7 @@ describe('XRay', function () {
       const xray = new XRay({ level: 'warn', isEnabled: true });
 
       await expect(
-        xray.trace(this.context, 'test', async () => { })
+        xray.trace(this.testContext, 'test', async () => { })
       ).to.eventually.be.fulfilled;
 
       expect(this.log.warn.callCount).to.be.equal(1);
@@ -54,7 +52,7 @@ describe('XRay', function () {
       const xray = new XRay({ level: 'warn', isEnabled: true });
 
       const innerFunction = xray._asyncFunctionWrapper(
-        this.context,
+        this.testContext,
         async (sub) => { sub.addAnnotation(); },
         this.resolve,
         this.reject,
@@ -75,7 +73,7 @@ describe('XRay', function () {
       const xray = new XRay({ level: 'warn', isEnabled: false });
 
       const innerFunction = xray._asyncFunctionWrapper(
-        this.context,
+        this.testContext,
         async (sub) => { sub.addAnnotation(); },
         this.resolve,
         this.reject,
@@ -99,7 +97,7 @@ describe('XRay', function () {
       const xray = new XRay({ level: 'warn', isEnabled: false });
 
       const innerFunction = xray._asyncFunctionWrapper(
-        this.context,
+        this.testContext,
         async () => 'result',
         this.resolve,
         this.reject,
@@ -123,7 +121,7 @@ describe('XRay', function () {
       const xray = new XRay({ level: 'warn', isEnabled: false });
 
       const innerFunction = xray._asyncFunctionWrapper(
-        this.context,
+        this.testContext,
         async () => { throw new Error('potato'); },
         this.resolve,
         this.reject,
@@ -145,7 +143,7 @@ describe('XRay', function () {
       const xray = new XRay({ level: 'warn', isEnabled: false });
 
       const innerFunction = xray._asyncFunctionWrapper(
-        this.context,
+        this.testContext,
         async () => { throw new Error('potato'); },
         this.resolve,
         this.reject,
