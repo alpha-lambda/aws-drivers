@@ -2,8 +2,9 @@
 
 const AWSXRay = require('aws-xray-sdk');
 const { expect } = require('chai');
-const XRay = require('../lib/xray');
+
 const setupTestHarness = require('./setup-test-harness');
+const XRay = require('../lib/xray');
 
 describe('XRay', function () {
   setupTestHarness();
@@ -16,10 +17,6 @@ describe('XRay', function () {
     };
 
     this.testContext.log = this.log;
-  });
-
-  afterEach(function() {
-    this.sandbox.restore();
   });
 
   describe('trace', function () {
