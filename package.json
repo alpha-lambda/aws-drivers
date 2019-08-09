@@ -1,6 +1,6 @@
 {
   "name": "@alpha-lambda/aws-drivers",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "Wrappers for AWS SDK services that make life easier (sometimes)",
   "repository": {
     "type": "git",
@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "@alpha-lambda/log-me-gently": "^1.0.0",
+    "aws-xray-sdk": "^2.3.4-experimental.1",
     "ajv": "^6.10.0",
     "lodash.chunk": "^4.2.0",
     "throat": "^5.0.0",
