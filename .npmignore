@@ -4,6 +4,7 @@
 .editorconfig
 .gitignore
 .nycrc
+.renovaterc
 .nyc_output/
 *.log
 circle.yml
