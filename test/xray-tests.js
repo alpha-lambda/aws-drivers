@@ -13,7 +13,7 @@ describe('XRay', function () {
     this.resolve = this.sandbox.stub().resolves();
     this.reject = this.sandbox.stub().rejects();
     this.log = {
-      warn: this.sandbox.stub()
+      warn: this.sandbox.stub(),
     };
 
     this.testContext.log = this.log;
@@ -48,7 +48,7 @@ describe('XRay', function () {
 
       const innerFunction = xray._asyncFunctionWrapper(
         this.testContext,
-        async (sub) => { sub.addAnnotation(); },
+        async sub => { sub.addAnnotation(); },
         this.resolve,
         this.reject,
       );
@@ -69,7 +69,7 @@ describe('XRay', function () {
 
       const innerFunction = xray._asyncFunctionWrapper(
         this.testContext,
-        async (sub) => { sub.addAnnotation(); },
+        async sub => { sub.addAnnotation(); },
         this.resolve,
         this.reject,
       );

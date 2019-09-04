@@ -16,7 +16,7 @@ describe('DynamoDBDocumentClientDriver', function() {
     this.client = this.sandbox.stub(this.driver._client);
   });
 
-  ['get', 'put', 'update', 'query', 'scan'].forEach((method) => {
+  ['get', 'put', 'update', 'query', 'scan'].forEach(method => {
     describe(`#${method}`, function() {
       it('should call API properly', async function() {
         const params = { param: uuid.v4() };
@@ -57,15 +57,15 @@ describe('DynamoDBDocumentClientDriver', function() {
         UnprocessedKeys: {
           'table-name': {
             Keys: [{ key: 'test2' }],
-          }
-        }
+          },
+        },
       });
 
       const secondResponse = this.awsPromise({
         Responses: {
-          'table-name': [{ test2: true }]
+          'table-name': [{ test2: true }],
         },
-        UnprocessedKeys: {}
+        UnprocessedKeys: {},
       });
 
       this.client.batchGet
@@ -77,31 +77,31 @@ describe('DynamoDBDocumentClientDriver', function() {
       const result = await this.driver.batchGet(this.testContext, {
         RequestItems: {
           'table-name': {
-            Keys: [{ key: 'test' }, { key: 'test2' }]
-          }
-        }
+            Keys: [{ key: 'test' }, { key: 'test2' }],
+          },
+        },
       });
 
       expect(result).to.deep.equal({
         Responses: {
-          'table-name': [{ test: true }, { test2: true }]
-        }
+          'table-name': [{ test: true }, { test2: true }],
+        },
       });
 
       sinon.assert.calledTwice(this.client.batchGet);
       sinon.assert.calledWith(this.client.batchGet.firstCall, {
         RequestItems: {
           'table-name': {
-            Keys: [{ key: 'test' }, { key: 'test2' }]
-          }
-        }
+            Keys: [{ key: 'test' }, { key: 'test2' }],
+          },
+        },
       });
       sinon.assert.calledWith(this.client.batchGet.secondCall, {
         RequestItems: {
           'table-name': {
-            Keys: [{ key: 'test2' }]
-          }
-        }
+            Keys: [{ key: 'test2' }],
+          },
+        },
       });
     });
 
@@ -109,9 +109,9 @@ describe('DynamoDBDocumentClientDriver', function() {
       const params = {
         RequestItems: {
           'table-name': {
-            Keys: [{ key: 'test' }, { key: 'test2' }]
-          }
-        }
+            Keys: [{ key: 'test' }, { key: 'test2' }],
+          },
+        },
       };
       const response = this.awsPromise({
         Responses: {
@@ -120,8 +120,8 @@ describe('DynamoDBDocumentClientDriver', function() {
         UnprocessedKeys: {
           'table-name': {
             Keys: [{ key: 'test2' }],
-          }
-        }
+          },
+        },
       });
 
       this.client.batchGet.returns(response);
