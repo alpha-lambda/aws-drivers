@@ -9,5 +9,5 @@ module.exports = {
   DynamoDBDocumentClient,
   S3,
   SQS,
-  XRay
+  XRay,
 };

@@ -9,12 +9,12 @@ module.exports = function() {
     this.sandbox = sinon.createSandbox();
     this.testContext = {
       awsRequestId: uuid.v4(),
-      log: pino({ level: process.env.LOG_LEVEL || 'silent' })
+      log: pino({ level: process.env.LOG_LEVEL || 'silent' }),
     };
     this.awsPromise = value => ({
       promise() {
         return Promise.resolve(typeof value === 'function' ? value() : value);
-      }
+      },
     });
   });
 

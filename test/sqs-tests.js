@@ -33,7 +33,7 @@ describe('SQSDriver', function() {
 
     it('should be rejected when message lacks required parameters', function() {
       const event = {
-        Records: [{}]
+        Records: [{}],
       };
 
       expect(() => this.driver.parse(this.testContext, event))
@@ -58,12 +58,12 @@ describe('SQSDriver', function() {
             attr: {
               dataType: 'String',
               stringValue: 'test value',
-              additional: true
-            }
+              additional: true,
+            },
           },
-          additional: true
+          additional: true,
         }],
-        additional: true
+        additional: true,
       };
 
       expect(() => this.driver.parse(this.testContext, event))
@@ -75,26 +75,26 @@ describe('SQSDriver', function() {
       const message = {
         body: JSON.stringify(body),
         messageId: uuid.v4(),
-        messageAttributes: {}
+        messageAttributes: {},
       };
 
       expect(this.driver.parse(this.testContext, message))
         .to.deep.equal([{
           body,
           messageId: message.messageId,
-          messageAttributes: message.messageAttributes
+          messageAttributes: message.messageAttributes,
         }]);
     });
 
     it('should support multi-message input', function() {
       const bodies = [
         { data: uuid.v4() },
-        { data: uuid.v4() }
+        { data: uuid.v4() },
       ];
       const messages = bodies.map(b => ({
         body: JSON.stringify(b),
         messageId: uuid.v4(),
-        messageAttributes: {}
+        messageAttributes: {},
       }));
 
       expect(this.driver.parse(this.testContext, messages))
@@ -102,13 +102,13 @@ describe('SQSDriver', function() {
           {
             body: bodies[0],
             messageId: messages[0].messageId,
-            messageAttributes: messages[0].messageAttributes
+            messageAttributes: messages[0].messageAttributes,
           },
           {
             body: bodies[1],
             messageId: messages[1].messageId,
-            messageAttributes: messages[1].messageAttributes
-          }
+            messageAttributes: messages[1].messageAttributes,
+          },
         ]);
     });
 
@@ -117,40 +117,40 @@ describe('SQSDriver', function() {
       const message = {
         body: JSON.stringify(body),
         messageId: uuid.v4(),
-        messageAttributes: {}
+        messageAttributes: {},
       };
       const event = {
-        Records: [message]
+        Records: [message],
       };
 
       expect(this.driver.parse(this.testContext, event))
         .to.deep.equal([{
           body,
           messageId: message.messageId,
-          messageAttributes: message.messageAttributes
+          messageAttributes: message.messageAttributes,
         }]);
     });
 
     it('should support nested messages', function() {
       const nested = {
-        foo: 'baz'
+        foo: 'baz',
       };
       const message = {
         body: {
-          Records: [nested]
+          Records: [nested],
         },
         messageId: uuid.v4(),
-        messageAttributes: {}
+        messageAttributes: {},
       };
       const event = {
-        Records: [Object.assign({}, message, { body: JSON.stringify(message.body) })]
+        Records: [Object.assign({}, message, { body: JSON.stringify(message.body) })],
       };
 
       expect(this.driver.parse(this.testContext, event))
         .to.deep.equal([{
           body: nested,
           messageId: message.messageId,
-          messageAttributes: message.messageAttributes
+          messageAttributes: message.messageAttributes,
         }]);
     });
 
@@ -161,21 +161,21 @@ describe('SQSDriver', function() {
         messageAttributes: {
           boolAttribute: {
             dataType: 'String.boolean',
-            stringValue: 'false'
+            stringValue: 'false',
           },
           explicitStringAttribute: {
             dataType: 'String.string',
-            stringValue: 'explicit string'
+            stringValue: 'explicit string',
           },
           stringAttribute: {
             dataType: 'String.string',
-            stringValue: 'regular string'
+            stringValue: 'regular string',
           },
           unknownAttribute: {
             dataType: 'String.object',
-            stringValue: 'unknown attribute'
-          }
-        }
+            stringValue: 'unknown attribute',
+          },
+        },
       };
 
       expect(this.driver.parse(this.testContext, message))
@@ -186,8 +186,8 @@ describe('SQSDriver', function() {
             boolAttribute: false,
             explicitStringAttribute: 'explicit string',
             stringAttribute: 'regular string',
-            unknownAttribute: 'unknown attribute'
-          }
+            unknownAttribute: 'unknown attribute',
+          },
         }]);
     });
   });
@@ -196,7 +196,7 @@ describe('SQSDriver', function() {
     it('should send message properly', async function() {
       const queueUrl = 'https://test-queue.com';
       const message = {
-        body: { data: uuid.v4() }
+        body: { data: uuid.v4() },
       };
 
       this.client.sendMessageBatch.returns(this.awsPromise({ Successful: [] }));
@@ -211,8 +211,8 @@ describe('SQSDriver', function() {
           QueueUrl: queueUrl,
           Entries: [{
             Id: '0',
-            MessageBody: JSON.stringify(message.body)
-          }]
+            MessageBody: JSON.stringify(message.body),
+          }],
         }
       );
     });
@@ -220,7 +220,7 @@ describe('SQSDriver', function() {
     it('should wrap SQS error into AwsDriverError', async function() {
       const queueUrl = 'https://test-queue.com';
       const message = {
-        body: { data: uuid.v4() }
+        body: { data: uuid.v4() },
       };
       const error = new Error('SQS error');
 
@@ -243,11 +243,11 @@ describe('SQSDriver', function() {
       const error = new Error('horrible error');
       const event = {
         body: {
-          data: uuid.v4()
+          data: uuid.v4(),
         },
         messageAttributes: {
-          ImportantAttribute: '42'
-        }
+          ImportantAttribute: '42',
+        },
       };
 
       this.client.sendMessageBatch.returns(this.awsPromise({ Successful: [] }));
@@ -266,22 +266,22 @@ describe('SQSDriver', function() {
             MessageAttributes: {
               'err.message': {
                 DataType: 'String.string',
-                StringValue: error.message
+                StringValue: error.message,
               },
               'err.stack': {
                 DataType: 'String.string',
-                StringValue: error.stack
+                StringValue: error.stack,
               },
               'context.awsRequestId': {
                 DataType: 'String.string',
-                StringValue: this.testContext.awsRequestId
+                StringValue: this.testContext.awsRequestId,
               },
               ImportantAttribute: {
                 DataType: 'String.string',
-                StringValue: '42'
-              }
-            }
-          }]
+                StringValue: '42',
+              },
+            },
+          }],
         }
       );
     });
@@ -290,8 +290,8 @@ describe('SQSDriver', function() {
       const queueUrl = 'https://test-queue.com';
       const event = {
         body: {
-          data: uuid.v4()
-        }
+          data: uuid.v4(),
+        },
       };
       const error = new Error('SQS error');
 
@@ -312,11 +312,11 @@ describe('SQSDriver', function() {
     it('should add expected message attributes', function() {
       const event = {
         body: 'foo',
-        messageId: uuid.v4()
+        messageId: uuid.v4(),
       };
       const error = {
         message: 'the worst error',
-        stack: 'stack-stack'
+        stack: 'stack-stack',
       };
 
       const formatted = this.driver._formatForDLQ(this.testContext, { event, error });
@@ -327,14 +327,14 @@ describe('SQSDriver', function() {
           'err.message': error.message,
           'err.stack': error.stack,
           'context.awsRequestId': this.testContext.awsRequestId,
-          'origin.messageId': event.messageId
-        }
+          'origin.messageId': event.messageId,
+        },
       });
     });
 
     it('should use event as body when event does not have body', function() {
       const event = {
-        data: 'foo'
+        data: 'foo',
       };
       const error = {};
 
@@ -349,8 +349,8 @@ describe('SQSDriver', function() {
       const event = {
         body: 'foo',
         messageAttributes: {
-          foo: 'bar'
-        }
+          foo: 'bar',
+        },
       };
       const error = {};
 
@@ -362,7 +362,7 @@ describe('SQSDriver', function() {
 
     it('should handle missing data for message attributes', function() {
       const event = {
-        body: 'foo'
+        body: 'foo',
       };
       const error = {};
 
@@ -392,14 +392,14 @@ describe('SQSDriver', function() {
       const queueUrl = 'https://test-queue.com';
       const messages = [
         { body: { data: uuid.v4() } },
-        { body: { data: uuid.v4() } }
+        { body: { data: uuid.v4() } },
       ];
       const testResponse = {
         Successful: [
           { Id: '0', MessageId: uuid.v4() },
-          { Id: '1', MessageId: uuid.v4() }
+          { Id: '1', MessageId: uuid.v4() },
         ],
-        Failed: []
+        Failed: [],
       };
 
       this.client.sendMessageBatch.returns(this.awsPromise(testResponse));
@@ -414,8 +414,8 @@ describe('SQSDriver', function() {
           QueueUrl: queueUrl,
           Entries: [
             { Id: '0', MessageBody: JSON.stringify(messages[0].body) },
-            { Id: '1', MessageBody: JSON.stringify(messages[1].body) }
-          ]
+            { Id: '1', MessageBody: JSON.stringify(messages[1].body) },
+          ],
         }
       );
     });
@@ -433,7 +433,7 @@ describe('SQSDriver', function() {
         { body: { data: uuid.v4() } },
         { body: { data: uuid.v4() } },
         { body: { data: uuid.v4() } },
-        { body: { data: uuid.v4() } }
+        { body: { data: uuid.v4() } },
       ];
       this.client.sendMessageBatch.returns(this.awsPromise({}));
 
@@ -456,7 +456,7 @@ describe('SQSDriver', function() {
             { Id: '7', MessageBody: JSON.stringify(messages[7].body) },
             { Id: '8', MessageBody: JSON.stringify(messages[8].body) },
             { Id: '9', MessageBody: JSON.stringify(messages[9].body) },
-          ]
+          ],
         }
       );
       sinon.assert.calledWithExactly(
@@ -464,8 +464,8 @@ describe('SQSDriver', function() {
         {
           QueueUrl: queueUrl,
           Entries: [
-            { Id: '0', MessageBody: JSON.stringify(messages[10].body) }
-          ]
+            { Id: '0', MessageBody: JSON.stringify(messages[10].body) },
+          ],
         }
       );
     });
@@ -474,21 +474,21 @@ describe('SQSDriver', function() {
       const queueUrl = 'https://test-queue.com';
       const messages = [
         { body: { data: uuid.v4() } },
-        { body: { data: uuid.v4() } }
+        { body: { data: uuid.v4() } },
       ];
       const testResponse1 = {
         Successful: [
-          { Id: '0', MessageId: uuid.v4() }
+          { Id: '0', MessageId: uuid.v4() },
         ],
         Failed: [
-          { Id: '1' }
-        ]
+          { Id: '1' },
+        ],
       };
       const testResponse2 = {
         Successful: [
-          { Id: '0', MessageId: uuid.v4() }
+          { Id: '0', MessageId: uuid.v4() },
         ],
-        Failed: []
+        Failed: [],
       };
 
       this.client.sendMessageBatch
@@ -506,8 +506,8 @@ describe('SQSDriver', function() {
           QueueUrl: queueUrl,
           Entries: [
             { Id: '0', MessageBody: JSON.stringify(messages[0].body) },
-            { Id: '1', MessageBody: JSON.stringify(messages[1].body) }
-          ]
+            { Id: '1', MessageBody: JSON.stringify(messages[1].body) },
+          ],
         }
       );
       sinon.assert.calledWithExactly(
@@ -515,8 +515,8 @@ describe('SQSDriver', function() {
         {
           QueueUrl: queueUrl,
           Entries: [
-            { Id: '0', MessageBody: JSON.stringify(messages[1].body) }
-          ]
+            { Id: '0', MessageBody: JSON.stringify(messages[1].body) },
+          ],
         }
       );
     });
@@ -524,11 +524,11 @@ describe('SQSDriver', function() {
     it('should reject when retry limit is reached', async function() {
       const queueUrl = 'https://test-queue.com';
       const messages = [{
-        body: { data: uuid.v4() }
+        body: { data: uuid.v4() },
       }];
       const testResponse = {
         Successful: [],
-        Failed: [{ Id: '0' }]
+        Failed: [{ Id: '0' }],
       };
 
       this.client.sendMessageBatch.returns(this.awsPromise(testResponse));
@@ -543,11 +543,11 @@ describe('SQSDriver', function() {
     it('should reject when message was not sent due to sender fault', async function() {
       const queueUrl = 'https://test-queue.com';
       const messages = [{
-        body: { data: uuid.v4() }
+        body: { data: uuid.v4() },
       }];
       const testResponse = {
         Successful: [],
-        Failed: [{ Id: '0', SenderFault: true }]
+        Failed: [{ Id: '0', SenderFault: true }],
       };
 
       this.client.sendMessageBatch.returns(this.awsPromise(testResponse));
@@ -563,7 +563,7 @@ describe('SQSDriver', function() {
       const queueUrl = 'test-queue';
       const message = {
         body: { data: uuid.v4() },
-        delaySeconds: 100
+        delaySeconds: 100,
       };
 
       this.client.sendMessageBatch.returns(this.awsPromise({ Successful: [] }));
@@ -579,8 +579,8 @@ describe('SQSDriver', function() {
           Entries: [{
             Id: '0',
             DelaySeconds: 100,
-            MessageBody: JSON.stringify(message.body)
-          }]
+            MessageBody: JSON.stringify(message.body),
+          }],
         }
       );
     });
@@ -591,8 +591,8 @@ describe('SQSDriver', function() {
         body: { data: uuid.v4() },
         messageAttributes: {
           boolAttribute: false,
-          stringAttribute: 'random string'
-        }
+          stringAttribute: 'random string',
+        },
       };
 
       this.client.sendMessageBatch.returns(this.awsPromise({ Successful: [] }));
@@ -611,14 +611,14 @@ describe('SQSDriver', function() {
             MessageAttributes: {
               boolAttribute: {
                 DataType: 'String.boolean',
-                StringValue: 'false'
+                StringValue: 'false',
               },
               stringAttribute: {
                 DataType: 'String.string',
-                StringValue: 'random string'
-              }
-            }
-          }]
+                StringValue: 'random string',
+              },
+            },
+          }],
         }
       );
     });
@@ -626,7 +626,7 @@ describe('SQSDriver', function() {
     it('should wrap SQS error into AwsDriverError', async function() {
       const queueUrl = 'https://test-queue.com';
       const messages = [{
-        body: { data: uuid.v4() }
+        body: { data: uuid.v4() },
       }];
       const error = new Error('SQS error');
 

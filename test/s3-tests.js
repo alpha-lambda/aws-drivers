@@ -39,7 +39,7 @@ describe('S3Driver', function() {
       const operation = 'getObject';
       const parameters = {
         Bucket: 'test-bucket',
-        Key: uuid.v4()
+        Key: uuid.v4(),
       };
       const urlTTL = 100500;
       const url = 'https://signed-url';
@@ -56,7 +56,7 @@ describe('S3Driver', function() {
         {
           Bucket: parameters.Bucket,
           Expires: urlTTL,
-          Key: parameters.Key
+          Key: parameters.Key,
         }
       );
     });
@@ -66,7 +66,7 @@ describe('S3Driver', function() {
       const operation = 'getObject';
       const parameters = {
         Bucket: 'test-bucket',
-        Key: uuid.v4()
+        Key: uuid.v4(),
       };
       const urlTTL = 100500;
 
@@ -115,7 +115,7 @@ describe('S3Driver', function() {
       sinon.assert.calledWith(this.client.putObject, {
         Body: body,
         Bucket: bucket,
-        Key: key
+        Key: key,
       });
     });
 
@@ -142,7 +142,7 @@ describe('S3Driver', function() {
       const body = 'foo';
       const key = 'test-key';
       const params = {
-        ContentEncoding: 'gzip'
+        ContentEncoding: 'gzip',
       };
       const response = { body: uuid.v4() };
 
@@ -156,7 +156,7 @@ describe('S3Driver', function() {
         Body: body,
         Bucket: bucket,
         ContentEncoding: params.ContentEncoding,
-        Key: key
+        Key: key,
       });
     });
 
@@ -165,7 +165,7 @@ describe('S3Driver', function() {
       const body = 'foo';
       const key = 'test-key';
       const params = {
-        Bucket: 'another-bucket'
+        Bucket: 'another-bucket',
       };
       const response = { body: uuid.v4() };
 
@@ -178,7 +178,7 @@ describe('S3Driver', function() {
       sinon.assert.calledWith(this.client.putObject, {
         Body: body,
         Bucket: bucket,
-        Key: key
+        Key: key,
       });
     });
 
@@ -235,7 +235,7 @@ describe('S3Driver', function() {
         {
           Body: body,
           Bucket: bucket,
-          Key: key
+          Key: key,
         },
         options
       );
@@ -264,7 +264,7 @@ describe('S3Driver', function() {
       const body = 'foo';
       const key = 'test-key';
       const params = {
-        ContentEncoding: 'gzip'
+        ContentEncoding: 'gzip',
       };
       const response = { body: uuid.v4() };
 
@@ -278,7 +278,7 @@ describe('S3Driver', function() {
         Body: body,
         Bucket: bucket,
         ContentEncoding: params.ContentEncoding,
-        Key: key
+        Key: key,
       });
     });
 
@@ -287,7 +287,7 @@ describe('S3Driver', function() {
       const body = 'foo';
       const key = 'test-key';
       const params = {
-        Bucket: 'another-bucket'
+        Bucket: 'another-bucket',
       };
       const response = { body: uuid.v4() };
 
@@ -300,7 +300,7 @@ describe('S3Driver', function() {
       sinon.assert.calledWith(this.client.upload, {
         Body: body,
         Bucket: bucket,
-        Key: key
+        Key: key,
       });
     });
 
