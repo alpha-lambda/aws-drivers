@@ -190,6 +190,25 @@ describe('SQSDriver', function() {
           },
         }]);
     });
+
+    it('should parse dedup and group ids', function() {
+      const message = {
+        body: JSON.stringify({ data: uuid.v4() }),
+        messageId: uuid.v4(),
+        messageAttributes: {},
+        dedupId: uuid.v4(),
+        groupId: uuid.v4(),
+      };
+
+      expect(this.driver.parse(this.testContext, message))
+        .to.deep.equal([{
+          body: JSON.parse(message.body),
+          messageId: message.messageId,
+          messageAttributes: {},
+          dedupId: message.dedupId,
+          groupId: message.groupId,
+        }]);
+    });
   });
 
   describe('#send', function() {
@@ -593,6 +612,8 @@ describe('SQSDriver', function() {
           boolAttribute: false,
           stringAttribute: 'random string',
         },
+        dedupId: uuid.v4(),
+        groupId: uuid.v4(),
       };
 
       this.client.sendMessageBatch.returns(this.awsPromise({ Successful: [] }));
@@ -618,6 +639,8 @@ describe('SQSDriver', function() {
                 StringValue: 'random string',
               },
             },
+            MessageDeduplicationId: message.dedupId,
+            MessageGroupId: message.groupId,
           }],
         }
       );

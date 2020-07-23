@@ -83,7 +83,9 @@ Validates and parses input, where input can be SQS message or SQS event. Sample 
     "messageAttributes": {
       "baz": 12345
     },
-    "messageId": 1234567890
+    "messageId": 1234567890,
+    "dedupId": "123456",
+    "groupId": "654321",
   }
 ]
 ```
@@ -95,6 +97,8 @@ Sends messages to the specified queue using batch API to reduce number of calls.
     - **body** - { Any } - the body of the message
     - **[delaySeconds]** - { Number } - the length of time, in seconds, for which a specific message is delayed
     - **[messageAttributes]** - { Object } - key-value pairs of attributes to be added to the message
+    - **[dedupId]** - { String } - Required for and only used in FIFO queues: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/using-messagededuplicationid-property.html
+    - **[groupId]** - { String } - Required for and only used in FIFO queues: https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/using-messagegroupid-property.html
 
 #### sendToDLQ(context, dlqUrl, items)
 Formats and sends messages to the specified deadletter queue.
