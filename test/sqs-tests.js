@@ -593,6 +593,8 @@ describe('SQSDriver', function() {
           boolAttribute: false,
           stringAttribute: 'random string',
         },
+        dedupId: uuid.v4(),
+        groupId: uuid.v4(),
       };
 
       this.client.sendMessageBatch.returns(this.awsPromise({ Successful: [] }));
@@ -618,6 +620,8 @@ describe('SQSDriver', function() {
                 StringValue: 'random string',
               },
             },
+            MessageDeduplicationId: message.dedupId,
+            MessageGroupId: message.groupId,
           }],
         }
       );
