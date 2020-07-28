@@ -16,7 +16,7 @@ describe('DynamoDBDocumentClientDriver', function() {
     this.client = this.sandbox.stub(this.driver._client);
   });
 
-  ['get', 'put', 'update', 'query', 'scan'].forEach(method => {
+  ['delete', 'get', 'put', 'update', 'query', 'scan'].forEach(method => {
     describe(`#${method}`, function() {
       it('should call API properly', async function() {
         const params = { param: uuid.v4() };
