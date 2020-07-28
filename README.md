@@ -27,6 +27,9 @@ Additional config properties:
 #### batchGet(context, params)
 Returns the attributes of one or more items from one or more tables ([parameters reference][document-client-batch-get-url]). Automatically retries when API call returns `UnprocessedKeys`
 
+#### delete(context, params)
+Deletes a single item in a table by primary key ([parameters reference][document-client-delete-url]).
+
 #### get(context, params)
 Returns a set of attributes for the item with the given key ([parameters reference][document-client-get-url]).
 
@@ -132,6 +135,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 [devdependencies-url]: https://david-dm.org/alpha-lambda/aws-drivers?type=dev
 [devdependencies-image]: https://david-dm.org/alpha-lambda/aws-drivers/dev-status.svg
 [document-client-batch-get-url]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#batchGet-property
+[document-client-delete-url]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#delete-property
 [document-client-get-url]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#get-property
 [document-client-put-url]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#put-property
 [document-client-query-url]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#query-property
