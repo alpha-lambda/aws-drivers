@@ -38,9 +38,9 @@ describe('SQSDriver', function() {
 
       expect(() => this.driver.parse(this.testContext, event))
         .to.throw(
-          '[$.Records[0]]: should have required property \'body\', ' +
-          '[$.Records[0]]: should have required property \'messageAttributes\', ' +
-          '[$.Records[0]]: should have required property \'messageId\', ' +
+          '[$/Records/0]: should have required property \'body\', ' +
+          '[$/Records/0]: should have required property \'messageAttributes\', ' +
+          '[$/Records/0]: should have required property \'messageId\', ' +
           '[SQS Message]: should have required property \'body\', ' +
           '[SQS Message]: should have required property \'messageAttributes\', ' +
           '[SQS Message]: should have required property \'messageId\', ' +
