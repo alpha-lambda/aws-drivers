@@ -1,4 +1,0 @@
---reporter spec
---ui bdd
---require test/support
---timeout 5000
