@@ -1,6 +1,6 @@
 {
   "name": "@alpha-lambda/aws-drivers",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "description": "Wrappers for AWS SDK services that make life easier (sometimes)",
   "repository": {
     "type": "git",
