@@ -41,7 +41,7 @@
     "mocha": "^8.2.1",
     "nyc": "^15.0.0",
     "pino": "^6.0.0",
-    "sinon": "^11.0.0"
+    "sinon": "^15.0.0"
   },
   "peerDependencies": {
     "aws-sdk": "^2.474.0"
