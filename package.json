@@ -31,7 +31,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@alpha-lambda/eslint-config": "^1.1.0",
+    "@alpha-lambda/eslint-config": "^2.0.0",
     "aws-sdk": "^2.474.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
