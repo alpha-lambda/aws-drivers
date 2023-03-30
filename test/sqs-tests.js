@@ -22,12 +22,12 @@ describe('SQSDriver', function() {
 
       expect(() => this.driver.parse(this.testContext, event))
         .to.throw(
-          '[SQS Event]: should have required property \'Records\', ' +
-          '[SQS Message]: should have required property \'body\', ' +
-          '[SQS Message]: should have required property \'messageAttributes\', ' +
-          '[SQS Message]: should have required property \'messageId\', ' +
-          '[input]: should be array, ' +
-          '[input]: should match exactly one schema in oneOf'
+          '[SQS Event]: must have required property \'Records\', ' +
+          '[SQS Message]: must have required property \'body\', ' +
+          '[SQS Message]: must have required property \'messageAttributes\', ' +
+          '[SQS Message]: must have required property \'messageId\', ' +
+          '[input]: must be array, ' +
+          '[input]: must match exactly one schema in oneOf'
         );
     });
 
@@ -38,14 +38,14 @@ describe('SQSDriver', function() {
 
       expect(() => this.driver.parse(this.testContext, event))
         .to.throw(
-          '[$/Records/0]: should have required property \'body\', ' +
-          '[$/Records/0]: should have required property \'messageAttributes\', ' +
-          '[$/Records/0]: should have required property \'messageId\', ' +
-          '[SQS Message]: should have required property \'body\', ' +
-          '[SQS Message]: should have required property \'messageAttributes\', ' +
-          '[SQS Message]: should have required property \'messageId\', ' +
-          '[input]: should be array, ' +
-          '[input]: should match exactly one schema in oneOf'
+          '[SQS Message]: must have required property \'body\', ' +
+          '[SQS Message]: must have required property \'body\', ' +
+          '[SQS Message]: must have required property \'messageAttributes\', ' +
+          '[SQS Message]: must have required property \'messageAttributes\', ' +
+          '[SQS Message]: must have required property \'messageId\', ' +
+          '[SQS Message]: must have required property \'messageId\', ' +
+          '[input]: must be array, ' +
+          '[input]: must match exactly one schema in oneOf'
         );
     });
 
