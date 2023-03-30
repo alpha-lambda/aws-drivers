@@ -38,7 +38,7 @@
     "chai-uuid": "^1.0.6",
     "eslint": "^8.37.0",
     "eslint-plugin-mocha": "^10.1.0",
-    "mocha": "^8.2.1",
+    "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "pino": "^8.11.0",
     "sinon": "^15.0.3"
