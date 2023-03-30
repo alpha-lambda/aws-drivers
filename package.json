@@ -52,6 +52,6 @@
     "aws-xray-sdk": "^3.4.1",
     "lodash.chunk": "^4.2.0",
     "throat": "^6.0.2",
-    "uuid": "^8.0.0"
+    "uuid": "^9.0.0"
   }
 }
