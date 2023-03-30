@@ -51,7 +51,7 @@
     "ajv": "^7.0.3",
     "aws-xray-sdk": "^3.4.1",
     "lodash.chunk": "^4.2.0",
-    "throat": "^6.0.1",
+    "throat": "^6.0.2",
     "uuid": "^8.0.0"
   }
 }
