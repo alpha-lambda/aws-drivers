@@ -32,7 +32,7 @@
   "license": "MIT",
   "devDependencies": {
     "@alpha-lambda/eslint-config": "^2.0.0",
-    "aws-sdk": "^2.474.0",
+    "aws-sdk": "^2.1347.0",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
     "chai-uuid": "^1.0.6",
@@ -44,7 +44,7 @@
     "sinon": "^15.0.3"
   },
   "peerDependencies": {
-    "aws-sdk": "^2.474.0"
+    "aws-sdk": "^2.1347.0"
   },
   "dependencies": {
     "@alpha-lambda/log-me-gently": "^1.1.0",
