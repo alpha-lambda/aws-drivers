@@ -22,7 +22,7 @@ describe('S3Driver', function() {
       const urlTTL = 100500;
 
       expect(
-        () => this.driver.getSignedUrl(this.testContext, { parameters, urlTTL })
+        () => this.driver.getSignedUrl(this.testContext, { parameters, urlTTL }),
       ).to.throw('missing operation');
     });
 
@@ -31,7 +31,7 @@ describe('S3Driver', function() {
       const parameters = {};
 
       expect(
-        () => this.driver.getSignedUrl(this.testContext, { operation, parameters })
+        () => this.driver.getSignedUrl(this.testContext, { operation, parameters }),
       ).to.throw('missing urlTTL');
     });
 
@@ -47,7 +47,7 @@ describe('S3Driver', function() {
       this.client.getSignedUrl.yields(null, url);
 
       await expect(
-        this.driver.getSignedUrl(this.testContext, { parameters, operation, urlTTL })
+        this.driver.getSignedUrl(this.testContext, { parameters, operation, urlTTL }),
       ).to.eventually.be.equal(url);
 
       sinon.assert.calledWith(
@@ -57,7 +57,7 @@ describe('S3Driver', function() {
           Bucket: parameters.Bucket,
           Expires: urlTTL,
           Key: parameters.Key,
-        }
+        },
       );
     });
 
@@ -73,7 +73,7 @@ describe('S3Driver', function() {
       this.client.getSignedUrl.yields(error);
 
       const actual = await expect(
-        this.driver.getSignedUrl(this.testContext, { parameters, operation, urlTTL })
+        this.driver.getSignedUrl(this.testContext, { parameters, operation, urlTTL }),
       ).to.be.rejectedWith(AwsDriverError);
 
       expect(actual).to.have.property('message', 'failed to generate signed URL');
@@ -88,7 +88,7 @@ describe('S3Driver', function() {
       const body = uuid.v4();
 
       expect(
-        () => this.driver.putObject(this.testContext, { body })
+        () => this.driver.putObject(this.testContext, { body }),
       ).to.throw('missing bucket');
     });
 
@@ -96,7 +96,7 @@ describe('S3Driver', function() {
       const bucket = 'test-bucket';
 
       expect(
-        () => this.driver.putObject(this.testContext, { bucket })
+        () => this.driver.putObject(this.testContext, { bucket }),
       ).to.throw('missing body');
     });
 
@@ -109,7 +109,7 @@ describe('S3Driver', function() {
       this.client.putObject.returns(this.awsPromise(response));
 
       await expect(
-        this.driver.putObject(this.testContext, { bucket, body, key })
+        this.driver.putObject(this.testContext, { bucket, body, key }),
       ).to.eventually.deep.equal(response);
 
       sinon.assert.calledWith(this.client.putObject, {
@@ -126,7 +126,7 @@ describe('S3Driver', function() {
       this.client.putObject.returns(this.awsPromise());
 
       await expect(
-        this.driver.putObject(this.testContext, { bucket, body })
+        this.driver.putObject(this.testContext, { bucket, body }),
       ).to.be.fulfilled;
 
       sinon.assert.calledOnce(this.client.putObject);
@@ -149,7 +149,7 @@ describe('S3Driver', function() {
       this.client.putObject.returns(this.awsPromise(response));
 
       await expect(
-        this.driver.putObject(this.testContext, { bucket, body, key }, params)
+        this.driver.putObject(this.testContext, { bucket, body, key }, params),
       ).to.eventually.deep.equal(response);
 
       sinon.assert.calledWith(this.client.putObject, {
@@ -172,7 +172,7 @@ describe('S3Driver', function() {
       this.client.putObject.returns(this.awsPromise(response));
 
       await expect(
-        this.driver.putObject(this.testContext, { bucket, body, key }, params)
+        this.driver.putObject(this.testContext, { bucket, body, key }, params),
       ).to.eventually.deep.equal(response);
 
       sinon.assert.calledWith(this.client.putObject, {
@@ -190,7 +190,7 @@ describe('S3Driver', function() {
       this.client.putObject.returns(this.awsPromise(Promise.reject(error)));
 
       const actual = await expect(
-        this.driver.putObject(this.testContext, { bucket, body })
+        this.driver.putObject(this.testContext, { bucket, body }),
       ).to.be.rejectedWith(AwsDriverError);
 
       expect(actual).to.have.property('message', 'failed to store object in S3');
@@ -205,7 +205,7 @@ describe('S3Driver', function() {
       const body = uuid.v4();
 
       expect(
-        () => this.driver.upload(this.testContext, { body })
+        () => this.driver.upload(this.testContext, { body }),
       ).to.throw('missing bucket');
     });
 
@@ -213,7 +213,7 @@ describe('S3Driver', function() {
       const bucket = 'test-bucket';
 
       expect(
-        () => this.driver.upload(this.testContext, { bucket })
+        () => this.driver.upload(this.testContext, { bucket }),
       ).to.throw('missing body');
     });
 
@@ -227,7 +227,7 @@ describe('S3Driver', function() {
       this.client.upload.returns(this.awsPromise(response));
 
       await expect(
-        this.driver.upload(this.testContext, { bucket, body, key, options })
+        this.driver.upload(this.testContext, { bucket, body, key, options }),
       ).to.eventually.deep.equal(response);
 
       sinon.assert.calledWith(
@@ -237,7 +237,7 @@ describe('S3Driver', function() {
           Bucket: bucket,
           Key: key,
         },
-        options
+        options,
       );
     });
 
@@ -248,7 +248,7 @@ describe('S3Driver', function() {
       this.client.upload.returns(this.awsPromise());
 
       await expect(
-        this.driver.upload(this.testContext, { bucket, body })
+        this.driver.upload(this.testContext, { bucket, body }),
       ).to.be.fulfilled;
 
       sinon.assert.calledOnce(this.client.upload);
@@ -271,7 +271,7 @@ describe('S3Driver', function() {
       this.client.upload.returns(this.awsPromise(response));
 
       await expect(
-        this.driver.upload(this.testContext, { bucket, body, key }, params)
+        this.driver.upload(this.testContext, { bucket, body, key }, params),
       ).to.eventually.deep.equal(response);
 
       sinon.assert.calledWith(this.client.upload, {
@@ -294,7 +294,7 @@ describe('S3Driver', function() {
       this.client.upload.returns(this.awsPromise(response));
 
       await expect(
-        this.driver.upload(this.testContext, { bucket, body, key }, params)
+        this.driver.upload(this.testContext, { bucket, body, key }, params),
       ).to.eventually.deep.equal(response);
 
       sinon.assert.calledWith(this.client.upload, {
@@ -312,7 +312,7 @@ describe('S3Driver', function() {
       this.client.upload.returns(this.awsPromise(Promise.reject(error)));
 
       const actual = await expect(
-        this.driver.upload(this.testContext, { bucket, body })
+        this.driver.upload(this.testContext, { bucket, body }),
       ).to.be.rejectedWith(AwsDriverError);
 
       expect(actual).to.have.property('message', 'failed to upload object to S3');

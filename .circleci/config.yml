@@ -7,7 +7,7 @@ references:
 
   node_container: &node_container
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:14
 
   attach_workspace: &attach_workspace
     attach_workspace:
@@ -23,7 +23,7 @@ jobs:
     <<: *node_container
     steps:
       - checkout
-      - run: npm install
+      - run: npm ci
       - persist_to_workspace:
           root: *workspace_root
           paths:
@@ -33,17 +33,15 @@ jobs:
     steps:
       - checkout
       - *attach_workspace
-      - run: npm run test
-      - run: sudo npm install -g coveralls
-      - run: cat ./coverage/lcov.info | coveralls
+      - run: npm test
+      - run: cat ./coverage/lcov.info | npx coveralls
   publish:
     <<: *node_container
     steps:
       - checkout
       - *attach_workspace
       - run: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-      - run: sudo npm install -g publish
-      - run: publish
+      - run: npx publish
 
 workflows:
   version: 2

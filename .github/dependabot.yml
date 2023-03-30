@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    open-pull-requests-limit: 99
+    directory: "/"
+    schedule:
+      interval: monthly
+    versioning-strategy: widen
+    commit-message:
+      prefix: fix
+      prefix-development: build
+      include: scope
+    reviewers:
+      - AntonBazhal

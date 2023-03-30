@@ -22,12 +22,12 @@ describe('SQSDriver', function() {
 
       expect(() => this.driver.parse(this.testContext, event))
         .to.throw(
-          '[SQS Event]: should have required property \'Records\', ' +
-          '[SQS Message]: should have required property \'body\', ' +
-          '[SQS Message]: should have required property \'messageAttributes\', ' +
-          '[SQS Message]: should have required property \'messageId\', ' +
-          '[input]: should be array, ' +
-          '[input]: should match exactly one schema in oneOf'
+          '[SQS Event]: must have required property \'Records\', ' +
+          '[SQS Message]: must have required property \'body\', ' +
+          '[SQS Message]: must have required property \'messageAttributes\', ' +
+          '[SQS Message]: must have required property \'messageId\', ' +
+          '[input]: must be array, ' +
+          '[input]: must match exactly one schema in oneOf',
         );
     });
 
@@ -38,14 +38,14 @@ describe('SQSDriver', function() {
 
       expect(() => this.driver.parse(this.testContext, event))
         .to.throw(
-          '[$/Records/0]: should have required property \'body\', ' +
-          '[$/Records/0]: should have required property \'messageAttributes\', ' +
-          '[$/Records/0]: should have required property \'messageId\', ' +
-          '[SQS Message]: should have required property \'body\', ' +
-          '[SQS Message]: should have required property \'messageAttributes\', ' +
-          '[SQS Message]: should have required property \'messageId\', ' +
-          '[input]: should be array, ' +
-          '[input]: should match exactly one schema in oneOf'
+          '[SQS Message]: must have required property \'body\', ' +
+          '[SQS Message]: must have required property \'body\', ' +
+          '[SQS Message]: must have required property \'messageAttributes\', ' +
+          '[SQS Message]: must have required property \'messageAttributes\', ' +
+          '[SQS Message]: must have required property \'messageId\', ' +
+          '[SQS Message]: must have required property \'messageId\', ' +
+          '[input]: must be array, ' +
+          '[input]: must match exactly one schema in oneOf',
         );
     });
 
@@ -202,7 +202,7 @@ describe('SQSDriver', function() {
       this.client.sendMessageBatch.returns(this.awsPromise({ Successful: [] }));
 
       await expect(
-        this.driver.send(this.testContext, queueUrl, message)
+        this.driver.send(this.testContext, queueUrl, message),
       ).to.eventually.be.fulfilled;
 
       sinon.assert.calledWithExactly(
@@ -213,7 +213,7 @@ describe('SQSDriver', function() {
             Id: '0',
             MessageBody: JSON.stringify(message.body),
           }],
-        }
+        },
       );
     });
 
@@ -227,7 +227,7 @@ describe('SQSDriver', function() {
       this.client.sendMessageBatch.returns(this.awsPromise(() => Promise.reject(error)));
 
       const actual = await expect(
-        this.driver.send(this.testContext, queueUrl, message)
+        this.driver.send(this.testContext, queueUrl, message),
       ).to.be.rejectedWith(AwsDriverError);
 
       expect(actual).to.have.property('message', 'failed to send messages to SQS queue');
@@ -253,7 +253,7 @@ describe('SQSDriver', function() {
       this.client.sendMessageBatch.returns(this.awsPromise({ Successful: [] }));
 
       await expect(
-        this.driver.sendToDLQ(this.testContext, queueUrl, { event, error })
+        this.driver.sendToDLQ(this.testContext, queueUrl, { event, error }),
       ).to.eventually.be.fulfilled;
 
       sinon.assert.calledWithExactly(
@@ -282,7 +282,7 @@ describe('SQSDriver', function() {
               },
             },
           }],
-        }
+        },
       );
     });
 
@@ -298,7 +298,7 @@ describe('SQSDriver', function() {
       this.client.sendMessageBatch.returns(this.awsPromise(() => Promise.reject(error)));
 
       const actual = await expect(
-        this.driver.sendToDLQ(this.testContext, queueUrl, { event, error: new Error() })
+        this.driver.sendToDLQ(this.testContext, queueUrl, { event, error: new Error() }),
       ).to.be.rejectedWith(AwsDriverError);
 
       expect(actual).to.have.property('message', 'failed to send messages to SQS queue');
@@ -382,7 +382,7 @@ describe('SQSDriver', function() {
       this.client.sendMessageBatch.returns(this.awsPromise({ Successful: [] }));
 
       await expect(
-        this.driver._sendBatch(this.testContext, queueUrl, messages)
+        this.driver._sendBatch(this.testContext, queueUrl, messages),
       ).to.be.fulfilled;
 
       sinon.assert.notCalled(this.client.sendMessageBatch);
@@ -405,7 +405,7 @@ describe('SQSDriver', function() {
       this.client.sendMessageBatch.returns(this.awsPromise(testResponse));
 
       await expect(
-        this.driver._sendBatch(this.testContext, queueUrl, messages)
+        this.driver._sendBatch(this.testContext, queueUrl, messages),
       ).to.eventually.deep.equal([testResponse.Successful]);
 
       sinon.assert.calledWithExactly(
@@ -416,7 +416,7 @@ describe('SQSDriver', function() {
             { Id: '0', MessageBody: JSON.stringify(messages[0].body) },
             { Id: '1', MessageBody: JSON.stringify(messages[1].body) },
           ],
-        }
+        },
       );
     });
 
@@ -438,7 +438,7 @@ describe('SQSDriver', function() {
       this.client.sendMessageBatch.returns(this.awsPromise({}));
 
       await expect(
-        this.driver._sendBatch(this.testContext, queueUrl, messages)
+        this.driver._sendBatch(this.testContext, queueUrl, messages),
       ).to.eventually.be.fulfilled;
 
       sinon.assert.calledWithExactly(
@@ -457,7 +457,7 @@ describe('SQSDriver', function() {
             { Id: '8', MessageBody: JSON.stringify(messages[8].body) },
             { Id: '9', MessageBody: JSON.stringify(messages[9].body) },
           ],
-        }
+        },
       );
       sinon.assert.calledWithExactly(
         this.client.sendMessageBatch,
@@ -466,7 +466,7 @@ describe('SQSDriver', function() {
           Entries: [
             { Id: '0', MessageBody: JSON.stringify(messages[10].body) },
           ],
-        }
+        },
       );
     });
 
@@ -496,7 +496,7 @@ describe('SQSDriver', function() {
         .onSecondCall().returns(this.awsPromise(testResponse2));
 
       await expect(
-        this.driver._sendBatch(this.testContext, queueUrl, messages)
+        this.driver._sendBatch(this.testContext, queueUrl, messages),
       ).to.eventually.deep.equal([testResponse1.Successful.concat(testResponse2.Successful)]);
 
       sinon.assert.calledTwice(this.client.sendMessageBatch);
@@ -508,7 +508,7 @@ describe('SQSDriver', function() {
             { Id: '0', MessageBody: JSON.stringify(messages[0].body) },
             { Id: '1', MessageBody: JSON.stringify(messages[1].body) },
           ],
-        }
+        },
       );
       sinon.assert.calledWithExactly(
         this.client.sendMessageBatch,
@@ -517,7 +517,7 @@ describe('SQSDriver', function() {
           Entries: [
             { Id: '0', MessageBody: JSON.stringify(messages[1].body) },
           ],
-        }
+        },
       );
     });
 
@@ -534,7 +534,7 @@ describe('SQSDriver', function() {
       this.client.sendMessageBatch.returns(this.awsPromise(testResponse));
 
       await expect(
-        this.driver._sendBatch(this.testContext, queueUrl, messages)
+        this.driver._sendBatch(this.testContext, queueUrl, messages),
       ).to.be.rejectedWith(AwsDriverError, 'failed to send messages to SQS queue due to retry limit reached');
 
       sinon.assert.calledThrice(this.client.sendMessageBatch);
@@ -553,7 +553,7 @@ describe('SQSDriver', function() {
       this.client.sendMessageBatch.returns(this.awsPromise(testResponse));
 
       await expect(
-        this.driver._sendBatch(this.testContext, queueUrl, messages)
+        this.driver._sendBatch(this.testContext, queueUrl, messages),
       ).to.be.rejectedWith(AwsDriverError, 'failed to send messages to SQS queue due to sender fault');
 
       sinon.assert.calledOnce(this.client.sendMessageBatch);
@@ -569,7 +569,7 @@ describe('SQSDriver', function() {
       this.client.sendMessageBatch.returns(this.awsPromise({ Successful: [] }));
 
       await expect(
-        this.driver._sendBatch(this.testContext, queueUrl, [message])
+        this.driver._sendBatch(this.testContext, queueUrl, [message]),
       ).to.eventually.be.fulfilled;
 
       sinon.assert.calledWithExactly(
@@ -581,7 +581,7 @@ describe('SQSDriver', function() {
             DelaySeconds: 100,
             MessageBody: JSON.stringify(message.body),
           }],
-        }
+        },
       );
     });
 
@@ -600,7 +600,7 @@ describe('SQSDriver', function() {
       this.client.sendMessageBatch.returns(this.awsPromise({ Successful: [] }));
 
       await expect(
-        this.driver._sendBatch(this.testContext, queueUrl, [message])
+        this.driver._sendBatch(this.testContext, queueUrl, [message]),
       ).to.eventually.be.fulfilled;
 
       sinon.assert.calledWithExactly(
@@ -623,7 +623,7 @@ describe('SQSDriver', function() {
             MessageDeduplicationId: message.dedupId,
             MessageGroupId: message.groupId,
           }],
-        }
+        },
       );
     });
 
@@ -637,7 +637,7 @@ describe('SQSDriver', function() {
       this.client.sendMessageBatch.returns(this.awsPromise(() => Promise.reject(error)));
 
       const actual = await expect(
-        this.driver._sendBatch(this.testContext, queueUrl, messages)
+        this.driver._sendBatch(this.testContext, queueUrl, messages),
       ).to.be.rejectedWith(AwsDriverError);
 
       expect(actual).to.have.property('message', 'failed to send messages to SQS queue');
