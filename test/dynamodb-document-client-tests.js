@@ -37,7 +37,7 @@ describe('DynamoDBDocumentClientDriver', function() {
         this.client[method].returns(this.awsPromise(() => Promise.reject(error)));
 
         const actual = await expect(
-          this.driver[method](this.testContext, params)
+          this.driver[method](this.testContext, params),
         ).to.be.rejectedWith(AwsDriverError);
 
         expect(actual).to.have.property('message', `failed to make DynamoDB ${method} call`);
@@ -127,7 +127,7 @@ describe('DynamoDBDocumentClientDriver', function() {
       this.client.batchGet.returns(response);
 
       const actual = await expect(
-        this.driver.batchGet(this.testContext, params)
+        this.driver.batchGet(this.testContext, params),
       ).to.be.rejectedWith(AwsDriverError);
 
       expect(actual).to.have.property('message', 'unable to fetch all requested items after too many retries');

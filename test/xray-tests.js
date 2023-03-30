@@ -34,7 +34,7 @@ describe('XRay', function () {
       const xray = new XRay({ level: 'warn', isEnabled: true });
 
       await expect(
-        xray.trace(this.testContext, 'test', async () => { })
+        xray.trace(this.testContext, 'test', async () => { }),
       ).to.eventually.be.fulfilled;
 
       expect(this.log.warn.callCount).to.be.equal(1);
@@ -57,7 +57,7 @@ describe('XRay', function () {
       };
 
       await expect(
-        innerFunction(subsegment)
+        innerFunction(subsegment),
       ).to.eventually.be.fulfilled;
 
       expect(subsegment.addAnnotation.callCount).to.be.equal(1);
@@ -79,7 +79,7 @@ describe('XRay', function () {
       };
 
       await expect(
-        innerFunction(subsegment)
+        innerFunction(subsegment),
       ).to.eventually.be.fulfilled;
 
       expect(subsegment.addAnnotation.callCount).to.be.equal(1);
@@ -102,7 +102,7 @@ describe('XRay', function () {
       };
 
       await expect(
-        innerFunction(subsegment)
+        innerFunction(subsegment),
       ).to.eventually.be.fulfilled;
 
       expect(subsegment.close.callCount).to.be.equal(1);
@@ -126,7 +126,7 @@ describe('XRay', function () {
       };
 
       await expect(
-        innerFunction(subsegment)
+        innerFunction(subsegment),
       ).to.eventually.be.rejected;
 
       expect(subsegment.close.callCount).to.be.equal(1);
@@ -148,7 +148,7 @@ describe('XRay', function () {
       };
 
       await expect(
-        innerFunction(subsegment)
+        innerFunction(subsegment),
       ).to.eventually.be.rejected;
 
       expect(subsegment.close.callCount).to.be.equal(1);
