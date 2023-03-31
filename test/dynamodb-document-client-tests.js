@@ -14,6 +14,9 @@ describe('DynamoDBDocumentClientDriver', function() {
   beforeEach(function() {
     this.driver = new DynamoDBDocumentClient({ level: 'debug' });
     this.client = this.sandbox.stub(this.driver._client);
+
+    this.timeNow = 946684799999;
+    this.sandbox.useFakeTimers(this.timeNow);
   });
 
   ['delete', 'get', 'put', 'update', 'query', 'scan'].forEach(method => {
@@ -444,6 +447,31 @@ describe('DynamoDBDocumentClientDriver', function() {
         .that.is.deep.equal(error);
 
       sinon.assert.called(this.client.query);
+    });
+  });
+
+  describe('#calculateTTL', function() {
+    it('should add retention time and return epoch in seconds', function() {
+      const retention = 604800000;
+      const ttl = this.driver.calculateTTL(retention);
+
+      expect(ttl).to.be.equal(947289599); // (946684799999 + 604800000) / 1000
+    });
+  });
+
+  describe('#msToTTL', function() {
+    it('should add retention time and return epoch in seconds', function() {
+      const ttl = this.driver.msToTTL(947289599999);
+
+      expect(ttl).to.be.equal(947289599);
+    });
+  });
+
+  describe('#ttlToMs', function() {
+    it('should add retention time and return epoch in seconds', function() {
+      const ms = this.driver.ttlToMs(947289599);
+
+      expect(ms).to.be.equal(947289599000);
     });
   });
 });
