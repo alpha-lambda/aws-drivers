@@ -39,8 +39,14 @@ Creates a new item, or replaces an old item ([parameters reference][document-cli
 #### query(context, params)
 Finds items based on key values ([parameters reference][document-client-query-url]).
 
+#### queryAll(context, params, [callback])
+The same as `query` but keeps calling DynamoDB until all items are returned ([parameters reference][document-client-query-url]). If callback is provided, it's called each time DynamoDB returns items.
+
 #### scan(context, params)
 Returns one or more items and item attributes by accessing every item in a table or a secondary index ([parameters reference][document-client-scan-url]).
+
+#### scanAll(context, params, { [concurrency], [callback] })
+The same as `scan` but keeps calling DynamoDB until all items are returned ([parameters reference][document-client-scan-url]). If callback is provided, it's called each time DynamoDB returns items. To perform parallel scan, set `concurrency` to a value greater than `1`.
 
 #### update(context, params)
 Edits an existing item's attributes, or adds a new item to the table if it does not already exist ([parameters reference][document-client-update-url]).
