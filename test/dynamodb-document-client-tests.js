@@ -354,7 +354,7 @@ describe('DynamoDBDocumentClientDriver', function() {
       sinon.assert.calledTwice(this.client.query);
     });
 
-    it('should scan in parallel and call callback when passed', async function() {
+    it('should query in parallel and call callback when passed', async function() {
       const tableName = 'the-table';
       const filterExpression = 'foo is bar';
       const callback = sinon.stub();
