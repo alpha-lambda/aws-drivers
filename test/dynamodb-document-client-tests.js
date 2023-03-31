@@ -133,4 +133,317 @@ describe('DynamoDBDocumentClientDriver', function() {
       expect(actual).to.have.property('message', 'unable to fetch all requested items after too many retries');
     });
   });
+
+  describe('#scanAll', function() {
+    it('should scan in parallel and merge results', async function() {
+      const tableName = 'the-table';
+      const filterExpression = 'foo is bar';
+      const concurrency = 2;
+
+      this.client.scan
+        .withArgs({
+          TableName: tableName,
+          FilterExpression: filterExpression,
+          Segment: 0,
+          TotalSegments: concurrency,
+          ExclusiveStartKey: null,
+        })
+        .returns(this.awsPromise({
+          Count: 2,
+          Items: ['call-1-1-first', 'call-1-1-second'],
+          LastEvaluatedKey: 12345,
+        }))
+        .withArgs({
+          TableName: tableName,
+          FilterExpression: filterExpression,
+          Segment: 0,
+          TotalSegments: concurrency,
+          ExclusiveStartKey: 12345,
+        })
+        .returns(this.awsPromise({
+          Count: 2,
+          Items: ['call-1-2-first', 'call-1-2-second'],
+        })).withArgs({
+          TableName: tableName,
+          FilterExpression: filterExpression,
+          Segment: 1,
+          TotalSegments: concurrency,
+          ExclusiveStartKey: null,
+        })
+        .returns(this.awsPromise({
+          Count: 2,
+          Items: ['call-2-1-first', 'call-2-1-second'],
+        }));
+
+      const result = await this.driver.scanAll(
+        this.testContext,
+        {
+          TableName: tableName,
+          FilterExpression: filterExpression,
+        },
+        {
+          concurrency,
+        },
+      );
+
+      expect(result).to.deep.equal([
+        'call-1-1-first',
+        'call-1-1-second',
+        'call-2-1-first',
+        'call-2-1-second',
+        'call-1-2-first',
+        'call-1-2-second',
+      ]);
+
+      sinon.assert.calledThrice(this.client.scan);
+    });
+
+    it('should scan in parallel and call callback when passed', async function() {
+      const tableName = 'the-table';
+      const filterExpression = 'foo is bar';
+      const concurrency = 2;
+      const callback = sinon.stub();
+
+      this.client.scan
+        .withArgs({
+          TableName: tableName,
+          FilterExpression: filterExpression,
+          Segment: 0,
+          TotalSegments: concurrency,
+          ExclusiveStartKey: null,
+        })
+        .returns(this.awsPromise({
+          Count: 2,
+          Items: ['call-1-1-first', 'call-1-1-second'],
+          LastEvaluatedKey: 12345,
+        }))
+        .withArgs({
+          TableName: tableName,
+          FilterExpression: filterExpression,
+          Segment: 0,
+          TotalSegments: concurrency,
+          ExclusiveStartKey: 12345,
+        })
+        .returns(this.awsPromise({
+          Count: 2,
+          Items: ['call-1-2-first', 'call-1-2-second'],
+        })).withArgs({
+          TableName: tableName,
+          FilterExpression: filterExpression,
+          Segment: 1,
+          TotalSegments: concurrency,
+          ExclusiveStartKey: null,
+        })
+        .returns(this.awsPromise({
+          Count: 2,
+          Items: ['call-2-1-first', 'call-2-1-second'],
+        }));
+
+      const result = await this.driver.scanAll(
+        this.testContext,
+        {
+          TableName: tableName,
+          FilterExpression: filterExpression,
+        },
+        {
+          concurrency,
+          callback,
+        },
+      );
+
+      expect(result).to.be.undefined;
+
+      sinon.assert.calledThrice(this.client.scan);
+
+      sinon.assert.calledThrice(callback);
+      sinon.assert.calledWithExactly(callback, ['call-1-1-first', 'call-1-1-second']);
+      sinon.assert.calledWithExactly(callback, ['call-1-2-first', 'call-1-2-second']);
+      sinon.assert.calledWithExactly(callback, ['call-2-1-first', 'call-2-1-second']);
+    });
+
+    it('should handle empty response from DynamoDB', async function() {
+      const tableName = 'the-table';
+      const filterExpression = 'foo is bar';
+
+      this.client.scan
+        .returns(this.awsPromise({
+          Count: 0,
+          Items: [],
+        }));
+
+      const result = await this.driver.scanAll(
+        this.testContext,
+        {
+          TableName: tableName,
+          FilterExpression: filterExpression,
+        },
+      );
+
+      expect(result).to.deep.equal([]);
+
+      sinon.assert.called(this.client.scan);
+    });
+
+    it('should surface DynamoDB errors', async function() {
+      const tableName = 'the-table';
+      const filterExpression = 'foo is bar';
+      const error = new Error('AWS error');
+
+      this.client.scan.returns(this.awsPromise(() => Promise.reject(error)));
+
+      const actual = await expect(
+        this.driver.scanAll(
+          this.testContext,
+          {
+            TableName: tableName,
+            FilterExpression: filterExpression,
+          },
+        ),
+      ).to.be.rejectedWith(AwsDriverError);
+
+      expect(actual).to.have.property('message', 'failed to make DynamoDB scan call');
+      expect(actual)
+        .to.have.property('cause')
+        .that.is.deep.equal(error);
+
+      sinon.assert.called(this.client.scan);
+    });
+  });
+
+  describe('#queryAll', function() {
+    it('should query multiple times and merge results', async function() {
+      const tableName = 'the-table';
+      const filterExpression = 'foo is bar';
+
+      this.client.query
+        .withArgs({
+          TableName: tableName,
+          FilterExpression: filterExpression,
+          ExclusiveStartKey: null,
+        })
+        .returns(this.awsPromise({
+          Count: 2,
+          Items: ['call-1-first', 'call-1-second'],
+          LastEvaluatedKey: 12345,
+        }))
+        .withArgs({
+          TableName: tableName,
+          FilterExpression: filterExpression,
+          ExclusiveStartKey: 12345,
+        })
+        .returns(this.awsPromise({
+          Count: 2,
+          Items: ['call-2-first', 'call-2-second'],
+        }));
+
+      const result = await this.driver.queryAll(
+        this.testContext,
+        {
+          TableName: tableName,
+          FilterExpression: filterExpression,
+        },
+      );
+
+      expect(result).to.deep.equal([
+        'call-1-first',
+        'call-1-second',
+        'call-2-first',
+        'call-2-second',
+      ]);
+
+      sinon.assert.calledTwice(this.client.query);
+    });
+
+    it('should query in parallel and call callback when passed', async function() {
+      const tableName = 'the-table';
+      const filterExpression = 'foo is bar';
+      const callback = sinon.stub();
+
+      this.client.query
+        .withArgs({
+          TableName: tableName,
+          FilterExpression: filterExpression,
+          ExclusiveStartKey: null,
+        })
+        .returns(this.awsPromise({
+          Count: 2,
+          Items: ['call-1-first', 'call-1-second'],
+          LastEvaluatedKey: 12345,
+        }))
+        .withArgs({
+          TableName: tableName,
+          FilterExpression: filterExpression,
+          ExclusiveStartKey: 12345,
+        })
+        .returns(this.awsPromise({
+          Count: 2,
+          Items: ['call-2-first', 'call-2-second'],
+        }));
+
+      const result = await this.driver.queryAll(
+        this.testContext,
+        {
+          TableName: tableName,
+          FilterExpression: filterExpression,
+        },
+        callback,
+      );
+
+      expect(result).to.be.undefined;
+
+      sinon.assert.calledTwice(this.client.query);
+
+      sinon.assert.calledTwice(callback);
+      sinon.assert.calledWithExactly(callback, ['call-1-first', 'call-1-second']);
+      sinon.assert.calledWithExactly(callback, ['call-2-first', 'call-2-second']);
+    });
+
+    it('should handle empty response from DynamoDB', async function() {
+      const tableName = 'the-table';
+      const filterExpression = 'foo is bar';
+
+      this.client.query
+        .returns(this.awsPromise({
+          Count: 0,
+          Items: [],
+        }));
+
+      const result = await this.driver.queryAll(
+        this.testContext,
+        {
+          TableName: tableName,
+          FilterExpression: filterExpression,
+        },
+      );
+
+      expect(result).to.deep.equal([]);
+
+      sinon.assert.called(this.client.query);
+    });
+
+    it('should surface DynamoDB errors', async function() {
+      const tableName = 'the-table';
+      const filterExpression = 'foo is bar';
+      const error = new Error('AWS error');
+
+      this.client.query.returns(this.awsPromise(() => Promise.reject(error)));
+
+      const actual = await expect(
+        this.driver.queryAll(
+          this.testContext,
+          {
+            TableName: tableName,
+            FilterExpression: filterExpression,
+          },
+        ),
+      ).to.be.rejectedWith(AwsDriverError);
+
+      expect(actual).to.have.property('message', 'failed to make DynamoDB query call');
+      expect(actual)
+        .to.have.property('cause')
+        .that.is.deep.equal(error);
+
+      sinon.assert.called(this.client.query);
+    });
+  });
 });
